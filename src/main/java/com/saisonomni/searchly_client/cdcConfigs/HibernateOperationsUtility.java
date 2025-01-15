@@ -1,24 +1,39 @@
 package com.saisonomni.searchly_client.cdcConfigs;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.saison.omni.ehs.EhsHelper;
+import com.saison.omni.ehs.EventConstants;
+import com.saison.omni.ehs.MessageCategory;
 import com.saisonomni.searchly_client.cdcConfigs.annotations.CDCEntity;
 import com.saisonomni.searchly_client.cdcConfigs.annotations.PublishEventOnDelete;
 import com.saisonomni.searchly_client.cdcConfigs.annotations.PublishEventOnUpsert;
 import com.saisonomni.searchly_client.cdcConfigs.dto.UpsertValueDTO;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.web.util.WebUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 
 @Slf4j
+@Component
 public class HibernateOperationsUtility {
-
-    public static void upsertHelper(Object entity){
+    @Value("${service.ehs.url}")
+    String eventUrl;
+    @Value("${spring.application.name}")
+    String applicationName;
+    @Autowired
+    WebUtils webUtils;
+    @Autowired
+    ObjectMapper objectMapper;
+    public static JSONObject upsertHelper(Object entity){
         if(!entity.getClass().isAnnotationPresent(CDCEntity.class)){
-            return;
+            return null;
         }
         Class<?> entityClass = entity.getClass();
         JSONObject jsonObject = new JSONObject();
@@ -80,8 +95,9 @@ public class HibernateOperationsUtility {
             jsonObject.put("value",upsertValueDTOList);
 //            sendEventUtility(jsonObject, "kuch bhi", "searchService.send", "internal");
         }
+        return jsonObject;
     }
-    public static void deleteHelper(Object entity, List<Field> fieldList) throws NoSuchFieldException, IllegalAccessException {
+    public static JSONObject deleteHelper(Object entity, List<Field> fieldList) throws NoSuchFieldException, IllegalAccessException {
         JSONObject jsonObject = new JSONObject();
         Class<?> entityClass = entity.getClass();
         PublishEventOnDelete annotation = fieldList.get(0).getAnnotation(PublishEventOnDelete.class);
@@ -128,8 +144,26 @@ public class HibernateOperationsUtility {
         upsertValueDTOList.add(upsertValueDTO);
         jsonObject.put("operation","DELETE");
         jsonObject.put("value",upsertValueDTOList);
-//        sendEventUtility(jsonObject,"kuch bhi","searchService.send","internal");
+        return jsonObject;
+//        sendEventUtility(jsonObject,MessageCategory.DIRECT,applicationName,"searchService.send","internal");
     }
+//    public void sendEventUtility(Object object, MessageCategory category, String serviceName, String eventType, String destination) {
+//        try {
+//            Gson gson = new Gson();
+//            EhsHelper ehsHelper = new EhsHelper(eventUrl, applicationName, webUtils, objectMapper);
+//            Map<String, Object> attributes = new HashMap<>(4);
+//            attributes.put(EventConstants.EVENT_METADATA_EVENT_TYPE, eventType);
+//            attributes.put(EventConstants.EVENT_METADATA_SOURCE,serviceName);
+//            attributes.put(EventConstants.REG_METADATA_MESSAGE_TYPE,category);
+//            attributes.put(EventConstants.PAYLOAD_METADATA_DESTINATION,destination);
+//            log.info("sending event: {}, eventType: {}, destination: {}, eventUrl: {}", object, eventType, destination, eventUrl);
+//            ehsHelper.sendEvent(gson.toJson(object),attributes);
+//        } catch (RuntimeException e) {
+//            log.error(e.getMessage());
+//            log.error(Arrays.toString(e.getStackTrace()));
+//        }
+//
+//    }
 //    public static void sendEventUtility(Object object, String serviceName,
 //                                        String eventType, String destination) {
 //        try {

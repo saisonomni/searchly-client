@@ -67,6 +67,12 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 
 	implementation 'net.minidev:json-smart:2.4.7'
+
+	implementation 'com.saison.omni:ehs-client-spring2:1.0.8-alpha.1'
+
+	//omni-common
+	implementation 'com.saison.omni:platform-commons:2.0.9-alpha'
+	compileOnly 'com.saison.omni:platform-commons:2.0.9-alpha'
 }
 
 sourceSets {

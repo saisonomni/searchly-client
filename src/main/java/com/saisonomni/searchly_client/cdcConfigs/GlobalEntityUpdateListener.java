@@ -9,6 +9,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.event.spi.MergeContext;
 import org.hibernate.event.spi.MergeEvent;
 import org.hibernate.event.spi.MergeEventListener;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -18,6 +19,8 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class GlobalEntityUpdateListener implements MergeEventListener {
+    @Autowired
+    SendEventUtility sendEventUtility;
 
     @Override
     public void onMerge(MergeEvent event) {
@@ -48,7 +51,7 @@ public class GlobalEntityUpdateListener implements MergeEventListener {
         }
         Class<?> entityClass = entity.getClass();
         log.info("Entering post delete listener");
-        JSONObject jsonObject = new JSONObject();
+        JSONObject jsonObject;
         /*
         Check if the entity is being soft deleted
         * */
@@ -67,10 +70,11 @@ public class GlobalEntityUpdateListener implements MergeEventListener {
         if(fieldList.size()==1){
             // publish the payload with type DELETE
             //and return
-            HibernateOperationsUtility.deleteHelper(entity,fieldList);
+            jsonObject = HibernateOperationsUtility.deleteHelper(entity,fieldList);
             }
         else{
-            HibernateOperationsUtility.upsertHelper(entity);
+            jsonObject = HibernateOperationsUtility.upsertHelper(entity);
         }
+        sendEventUtility.sendEventUtility(jsonObject);
     }
 }
