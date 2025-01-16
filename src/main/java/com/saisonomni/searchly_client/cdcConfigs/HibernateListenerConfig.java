@@ -7,10 +7,11 @@ import org.hibernate.internal.SessionFactoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
-
+import org.springframework.stereotype.Component;
 
 
 @Configuration
+@Component
 @ConditionalOnProperty(prefix = "hibernate.event.listener", name = "enabled", havingValue = "true")
 public class HibernateListenerConfig {
     @Autowired
