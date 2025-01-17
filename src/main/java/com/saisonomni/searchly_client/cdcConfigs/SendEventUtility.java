@@ -15,23 +15,16 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component
 @Slf4j
+@Component(value = "SendEventUtility")
 public class SendEventUtility {
-    @Value("${service.ehs.url}")
-    String eventUrl;
-    @Value("${spring.application.name}")
-    String applicationName;
-    @Autowired
-    Gson gson;
-    @Autowired
-    WebUtils webUtils;
-    @Autowired
-    ObjectMapper objectMapper;
+    String eventUrl= "http://localhost:8088";
+    String applicationName = "";
+
     public void sendEventUtility(Object object) {
         try {
             Gson gson = new Gson();
-            EhsHelper ehsHelper = new EhsHelper(eventUrl, applicationName, webUtils, objectMapper);
+            EhsHelper ehsHelper = new EhsHelper(eventUrl, applicationName);
             Map<String, Object> attributes = new HashMap<>(4);
             attributes.put(EventConstants.EVENT_METADATA_EVENT_TYPE, "searchService.send");
             attributes.put(EventConstants.EVENT_METADATA_SOURCE,applicationName);

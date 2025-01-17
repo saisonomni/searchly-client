@@ -8,6 +8,7 @@ import org.hibernate.event.spi.PostDeleteEvent;
 import org.hibernate.event.spi.PostDeleteEventListener;
 import org.hibernate.persister.entity.EntityPersister;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -16,8 +17,6 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class GlobalEntityDeleteListener implements PostDeleteEventListener {
-    @Autowired
-    SendEventUtility sendEventUtility;
     @Override
     public void onPostDelete(PostDeleteEvent event) {
         log.info("Entering post delete listener");
@@ -44,7 +43,7 @@ public class GlobalEntityDeleteListener implements PostDeleteEventListener {
         JSONObject jsonObject;
         try {
             jsonObject = HibernateOperationsUtility.deleteHelper(entity,fieldList);
-            sendEventUtility.sendEventUtility(jsonObject);
+            new SendEventUtility().sendEventUtility(jsonObject);
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
@@ -52,6 +51,11 @@ public class GlobalEntityDeleteListener implements PostDeleteEventListener {
         }
     }
 
+
+    @Override
+    public boolean requiresPostCommitHanding(EntityPersister persister) {
+        return false;
+    }
 
     @Override
     public boolean requiresPostCommitHandling(EntityPersister persister) {

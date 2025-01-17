@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.saisonomni'
-version = '1.0.2'
+version = '1.0.14'
 sourceCompatibility = '11'
 
 repositories {
@@ -25,7 +25,7 @@ publishing {
 		mavenJava(MavenPublication) {
 			groupId = 'com.saisonomni'
 			artifactId = 'searchly-client'
-			version = '1.0.2'
+			version = '1.0.14'
 			from components.java
 		}
 	}
@@ -43,19 +43,7 @@ publishing {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	// Hibernate Core (Required for Hibernate ORM functionality)
-	implementation 'org.hibernate:hibernate-core:6.2.15.Final'
-	// Hibernate EntityManager (JPA integration; already included in hibernate-core for Hibernate 5.2+)
-	// implementation 'org.hibernate:hibernate-entitymanager:5.6.15.Final' // Uncomment if needed for legacy Hibernate versions.
-
-	// Hibernate Validator (For Bean Validation - optional)
-	implementation 'org.hibernate.validator:hibernate-validator:8.0.0.Final'
-
-	// Jakarta Persistence API (JPA)
-	implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
-
-	// Jakarta Annotation API (Used for annotations like @Generated, @Resource, etc.)
-	implementation 'jakarta.annotation:jakarta.annotation-api:2.1.1'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
 	implementation 'com.google.code.gson:gson:2.10.1'
 
@@ -68,11 +56,11 @@ dependencies {
 
 	implementation 'net.minidev:json-smart:2.4.7'
 
-	implementation 'com.saison.omni:ehs-client-spring2:1.0.8-alpha.1'
+	implementation 'com.saison.omni:ehs-client:0.1.2'
 
 	//omni-common
-	implementation 'com.saison.omni:platform-commons:2.0.9-alpha'
-	compileOnly 'com.saison.omni:platform-commons:2.0.9-alpha'
+	implementation 'com.saison.omni:platform-commons:1.0.0'
+	compileOnly 'com.saison.omni:platform-commons:1.0.0'
 }
 
 sourceSets {

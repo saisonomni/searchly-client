@@ -9,18 +9,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@Component
 public class GlobalEntityInsertListener implements PostInsertEventListener {
-    @Autowired
-    SendEventUtility sendEventUtility;
 
     @Override
     public void onPostInsert(PostInsertEvent event) {
         Object entity = event.getEntity();
         JSONObject jsonObject = HibernateOperationsUtility.upsertHelper(entity);
-        sendEventUtility.sendEventUtility(jsonObject);
+        new SendEventUtility().sendEventUtility(jsonObject);
     }
 
+
+    @Override
+    public boolean requiresPostCommitHanding(EntityPersister persister) {
+        return false;
+    }
 
     @Override
     public boolean requiresPostCommitHandling(EntityPersister persister) {
