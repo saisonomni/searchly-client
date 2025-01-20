@@ -1,20 +1,11 @@
 package com.saisonomni.searchly_client.cdcConfigs;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.saison.omni.ehs.EhsHelper;
-import com.saison.omni.ehs.EventConstants;
-import com.saison.omni.ehs.MessageCategory;
 import com.saisonomni.searchly_client.cdcConfigs.annotations.CDCEntity;
 import com.saisonomni.searchly_client.cdcConfigs.annotations.PublishEventOnDelete;
 import com.saisonomni.searchly_client.cdcConfigs.annotations.PublishEventOnUpsert;
 import com.saisonomni.searchly_client.cdcConfigs.dto.UpsertValueDTO;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import org.springframework.web.util.WebUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -84,14 +75,12 @@ public class HibernateOperationsUtility {
         if (annotationPresent) {
             jsonObject.put("operation", "UPSERT");
             jsonObject.put("value",upsertValueDTOList);
-//            sendEventUtility(jsonObject, "kuch bhi", "searchService.send", "internal");
         }
         return jsonObject;
     }
-    public static JSONObject deleteHelper(Object entity, List<Field> fieldList) throws NoSuchFieldException, IllegalAccessException {
+    public static JSONObject deleteHelper(Object entity, PublishEventOnDelete annotation) throws NoSuchFieldException, IllegalAccessException {
         JSONObject jsonObject = new JSONObject();
         Class<?> entityClass = entity.getClass();
-        PublishEventOnDelete annotation = fieldList.get(0).getAnnotation(PublishEventOnDelete.class);
         jsonObject.put("searchIndex", annotation.eventName());
         List<UpsertValueDTO> upsertValueDTOList = new ArrayList<>();
         UpsertValueDTO upsertValueDTO = UpsertValueDTO.builder()
@@ -136,66 +125,5 @@ public class HibernateOperationsUtility {
         jsonObject.put("operation","DELETE");
         jsonObject.put("value",upsertValueDTOList);
         return jsonObject;
-//        sendEventUtility(jsonObject,MessageCategory.DIRECT,applicationName,"searchService.send","internal");
     }
-//    public void sendEventUtility(Object object, MessageCategory category, String serviceName, String eventType, String destination) {
-//        try {
-//            Gson gson = new Gson();
-//            EhsHelper ehsHelper = new EhsHelper(eventUrl, applicationName, webUtils, objectMapper);
-//            Map<String, Object> attributes = new HashMap<>(4);
-//            attributes.put(EventConstants.EVENT_METADATA_EVENT_TYPE, eventType);
-//            attributes.put(EventConstants.EVENT_METADATA_SOURCE,serviceName);
-//            attributes.put(EventConstants.REG_METADATA_MESSAGE_TYPE,category);
-//            attributes.put(EventConstants.PAYLOAD_METADATA_DESTINATION,destination);
-//            log.info("sending event: {}, eventType: {}, destination: {}, eventUrl: {}", object, eventType, destination, eventUrl);
-//            ehsHelper.sendEvent(gson.toJson(object),attributes);
-//        } catch (RuntimeException e) {
-//            log.error(e.getMessage());
-//            log.error(Arrays.toString(e.getStackTrace()));
-//        }
-//
-//    }
-//    public static void sendEventUtility(Object object, String serviceName,
-//                                        String eventType, String destination) {
-//        try {
-//            Gson gson = new Gson();
-//            String eventUrl = "http://ehs-service.l2.svc.cluster.local:8080";
-//            Map<String, Object> attributes = new HashMap<>(4);
-//            attributes.put("eventMetadata.eventType", eventType);
-//            attributes.put("eventMetadata.source",serviceName);
-//            attributes.put("listenerRegistrationUnit.messageType","DIRECT");
-//            attributes.put("payloadMetadata.destination",destination);
-//            log.info("sending event: {}, eventType: {}, destination: {}, eventUrl: {}", object, eventType, destination, eventUrl);
-//            sendEvent(gson.toJson(object),attributes,eventUrl);
-//        } catch (RuntimeException e) {
-//            log.error(e.getMessage());
-//            log.error(Arrays.toString(e.getStackTrace()));
-//        }
-//    }
-//    public static void sendEvent(String payload, Map<String, Object> attributes,String eventUrl) {
-//        EventPayload eventPayload = EventPayload.builder().payload(payload).eventContext(new EventContext()).payloadMetadata(new PayloadMetadata()).build();
-//        eventPayload.getEventContext().setEventId(UUID.randomUUID().toString());
-//        eventPayload.getEventContext().setCreatedAt(System.currentTimeMillis());
-//        attributes.forEach((k, v) -> {
-//            switch (k) {
-//                case "eventMetadata.source":
-//                    eventPayload.getEventContext().setSource(String.valueOf(v));
-//                    break;
-//                case "eventMetadata.eventType":
-//                    eventPayload.getEventContext().setEventType(String.valueOf(v));
-//                    break;
-//                case "payloadMetadata.destination":
-//                    eventPayload.getPayloadMetadata().setDestination(String.valueOf(v));
-//                    break;
-//                case "payloadMetadata.destinationType":
-//                    eventPayload.getPayloadMetadata().setDestinationType(String.valueOf(v));
-//                    break;
-//                case "eventMetadata.delay":
-//                    eventPayload.getEventContext().setDelay((Long)v);
-//            }
-//
-//        });
-//        RestTemplate restTemplate = new RestTemplate();
-//        restTemplate.postForEntity(eventUrl + "/event-handling/event", eventPayload, Map.class, new Object[0]);
-//    }
 }

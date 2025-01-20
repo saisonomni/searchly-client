@@ -8,14 +8,9 @@ import net.minidev.json.JSONObject;
 import org.hibernate.HibernateException;
 import org.hibernate.event.spi.MergeEvent;
 import org.hibernate.event.spi.MergeEventListener;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class GlobalEntityUpdateListener implements MergeEventListener {
@@ -50,25 +45,17 @@ public class GlobalEntityUpdateListener implements MergeEventListener {
         Class<?> entityClass = entity.getClass();
         log.info("Entering post delete listener");
         JSONObject jsonObject;
+        //check what field needs to be checked
+        PublishEventOnDelete publishEventOnDelete = entityClass.getAnnotation(PublishEventOnDelete.class);
+        Field fieldToBeCheckedForDeletion = entityClass.getDeclaredField(publishEventOnDelete.keyName());
         /*
         Check if the entity is being soft deleted
         * */
-        List<Field> fieldList = Arrays.stream(entityClass.getDeclaredFields()).filter(field ->
-                        field.isAnnotationPresent(PublishEventOnDelete.class))
-                .collect(Collectors.toList());
-        fieldList = fieldList.stream().filter(field -> {
-            field.setAccessible(true);
-            try {
-                return field.get(entity).toString().compareToIgnoreCase(field.getAnnotation(PublishEventOnDelete.class)
-                        .deletedValue())==0;
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        }).collect(Collectors.toList());
-        if(fieldList.size()==1){
+        Boolean isSoftDeleted = fieldToBeCheckedForDeletion.get(entity).toString().compareToIgnoreCase(publishEventOnDelete.deletedValue())==0;
+        if(isSoftDeleted){
             // publish the payload with type DELETE
             //and return
-            jsonObject = HibernateOperationsUtility.deleteHelper(entity,fieldList);
+            jsonObject = HibernateOperationsUtility.deleteHelper(entity,publishEventOnDelete);
             }
         else{
             jsonObject = HibernateOperationsUtility.upsertHelper(entity);

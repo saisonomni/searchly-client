@@ -7,13 +7,6 @@ import net.minidev.json.JSONObject;
 import org.hibernate.event.spi.PostDeleteEvent;
 import org.hibernate.event.spi.PostDeleteEventListener;
 import org.hibernate.persister.entity.EntityPersister;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class GlobalEntityDeleteListener implements PostDeleteEventListener {
@@ -28,21 +21,12 @@ public class GlobalEntityDeleteListener implements PostDeleteEventListener {
             return;
         }
         Class<?> entityClass = entity.getClass();
-        List<Field> fieldList = Arrays.stream(entityClass.getDeclaredFields()).filter(field ->
-                        field.isAnnotationPresent(PublishEventOnDelete.class))
-                .collect(Collectors.toList());
-        fieldList = fieldList.stream().filter(field -> {
-            field.setAccessible(true);
-            try {
-                return field.get(entity).toString().compareToIgnoreCase(field.getAnnotation(PublishEventOnDelete.class)
-                        .deletedValue())==0;
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        }).collect(Collectors.toList());
+        if(entityClass.getAnnotation(PublishEventOnDelete.class) == null){
+            return;
+        }
         JSONObject jsonObject;
         try {
-            jsonObject = HibernateOperationsUtility.deleteHelper(entity,fieldList);
+            jsonObject = HibernateOperationsUtility.deleteHelper(entity,entityClass.getAnnotation(PublishEventOnDelete.class));
             new SendEventUtility().sendEventUtility(jsonObject);
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);
