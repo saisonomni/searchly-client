@@ -3,6 +3,7 @@ package com.saisonomni.searchly_client.cdcConfigs;
 
 import com.saisonomni.searchly_client.cdcConfigs.annotations.CDCEntity;
 import com.saisonomni.searchly_client.cdcConfigs.annotations.PublishEventOnDelete;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
 import org.hibernate.HibernateException;
@@ -11,6 +12,7 @@ import org.hibernate.event.spi.MergeEvent;
 import org.hibernate.event.spi.MergeEventListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -19,9 +21,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Configuration
+@AllArgsConstructor
 public class GlobalEntityUpdateListener implements MergeEventListener {
-    @Autowired
+
     SendEventUtility sendEventUtility;
 
     @Override

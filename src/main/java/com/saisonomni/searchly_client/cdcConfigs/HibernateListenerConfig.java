@@ -7,12 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManagerFactory;
 
 
-@Configuration
+@Component
+@DependsOn({"GlobalEntityInsertListener", "GlobalEntityDeleteListener", "GlobalEntityUpdateListener"})
+//@DependsOn("EntityListenerConfig")
 @ConditionalOnProperty(prefix = "hibernate.event.listener", name = "enabled", havingValue = "true")
 public class HibernateListenerConfig {
     @Autowired
