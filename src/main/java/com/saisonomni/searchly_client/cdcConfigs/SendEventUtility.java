@@ -9,13 +9,14 @@ import com.saison.omni.ehs.MessageCategory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component
+@Configuration
 @Slf4j
 public class SendEventUtility {
     @Value("${service.ehs.url}")
@@ -31,7 +32,7 @@ public class SendEventUtility {
     public void sendEventUtility(Object object) {
         try {
             Gson gson = new Gson();
-            EhsHelper ehsHelper = new EhsHelper(eventUrl, applicationName, webUtils, objectMapper);
+            EhsHelper ehsHelper = new EhsHelper(eventUrl, applicationName);
             Map<String, Object> attributes = new HashMap<>(4);
             attributes.put(EventConstants.EVENT_METADATA_EVENT_TYPE, "searchService.send");
             attributes.put(EventConstants.EVENT_METADATA_SOURCE,applicationName);

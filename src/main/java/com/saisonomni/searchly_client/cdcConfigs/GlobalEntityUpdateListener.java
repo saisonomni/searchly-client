@@ -6,10 +6,11 @@ import com.saisonomni.searchly_client.cdcConfigs.annotations.PublishEventOnDelet
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
 import org.hibernate.HibernateException;
-import org.hibernate.event.spi.MergeContext;
+import org.hibernate.event.internal.MergeContext;
 import org.hibernate.event.spi.MergeEvent;
 import org.hibernate.event.spi.MergeEventListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -18,6 +19,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
+@Configuration
 public class GlobalEntityUpdateListener implements MergeEventListener {
     @Autowired
     SendEventUtility sendEventUtility;
@@ -34,15 +36,20 @@ public class GlobalEntityUpdateListener implements MergeEventListener {
     }
 
     @Override
-    public void onMerge(MergeEvent event, MergeContext copiedAlready) {
-        try {
-            helper(event);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        }
+    public void onMerge(MergeEvent event, Map copiedAlready) throws HibernateException {
+
     }
+
+//    @Override
+//    public void onMerge(MergeEvent event, MergeContext copiedAlready) {
+//        try {
+//            helper(event);
+//        } catch (IllegalAccessException e) {
+//            throw new RuntimeException(e);
+//        } catch (NoSuchFieldException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
     private void helper(MergeEvent event) throws IllegalAccessException, NoSuchFieldException {
         Object entity = event.getEntity();

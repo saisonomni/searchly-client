@@ -8,6 +8,7 @@ import org.hibernate.event.spi.PostDeleteEvent;
 import org.hibernate.event.spi.PostDeleteEventListener;
 import org.hibernate.persister.entity.EntityPersister;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
+@Configuration
 public class GlobalEntityDeleteListener implements PostDeleteEventListener {
     @Autowired
     SendEventUtility sendEventUtility;
@@ -52,6 +54,11 @@ public class GlobalEntityDeleteListener implements PostDeleteEventListener {
         }
     }
 
+
+    @Override
+    public boolean requiresPostCommitHanding(EntityPersister persister) {
+        return false;
+    }
 
     @Override
     public boolean requiresPostCommitHandling(EntityPersister persister) {

@@ -23,14 +23,6 @@ import java.util.*;
 @Slf4j
 @Component
 public class HibernateOperationsUtility {
-    @Value("${service.ehs.url}")
-    String eventUrl;
-    @Value("${spring.application.name}")
-    String applicationName;
-    @Autowired
-    WebUtils webUtils;
-    @Autowired
-    ObjectMapper objectMapper;
     public static JSONObject upsertHelper(Object entity){
         if(!entity.getClass().isAnnotationPresent(CDCEntity.class)){
             return null;

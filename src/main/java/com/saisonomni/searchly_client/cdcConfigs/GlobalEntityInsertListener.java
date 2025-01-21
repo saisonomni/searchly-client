@@ -6,10 +6,10 @@ import org.hibernate.event.spi.PostInsertEvent;
 import org.hibernate.event.spi.PostInsertEventListener;
 import org.hibernate.persister.entity.EntityPersister;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
 @Slf4j
-@Component
+@Configuration
 public class GlobalEntityInsertListener implements PostInsertEventListener {
     @Autowired
     SendEventUtility sendEventUtility;
@@ -21,6 +21,11 @@ public class GlobalEntityInsertListener implements PostInsertEventListener {
         sendEventUtility.sendEventUtility(jsonObject);
     }
 
+
+    @Override
+    public boolean requiresPostCommitHanding(EntityPersister persister) {
+        return false;
+    }
 
     @Override
     public boolean requiresPostCommitHandling(EntityPersister persister) {
