@@ -5,6 +5,7 @@ import org.hibernate.event.service.spi.EventListenerRegistry;
 import org.hibernate.event.spi.EventType;
 import org.hibernate.internal.SessionFactoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -18,7 +19,7 @@ import javax.persistence.EntityManagerFactory;
 @ConditionalOnProperty(prefix = "hibernate.event.listener", name = "enabled", havingValue = "true")
 @DependsOn("SendEventUtility")
 public class HibernateListenerConfig {
-    public HibernateListenerConfig(EntityManagerFactory entityManagerFactory) {
+    public HibernateListenerConfig(@Qualifier("entityManagerFactoryWrite")EntityManagerFactory entityManagerFactory) {
         SessionFactoryImpl sessionFactory = entityManagerFactory.unwrap(SessionFactoryImpl.class);
         EventListenerRegistry registry = sessionFactory.getServiceRegistry()
                 .getService(EventListenerRegistry.class);

@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.saisonomni'
-version = '1.0.15'
+version = '1.0.27'
 sourceCompatibility = '11'
 
 repositories {
@@ -25,7 +25,7 @@ publishing {
 		mavenJava(MavenPublication) {
 			groupId = 'com.saisonomni'
 			artifactId = 'searchly-client'
-			version = '1.0.15'
+			version = '1.0.27'
 			from components.java
 		}
 	}
@@ -59,7 +59,7 @@ dependencies {
 	implementation 'com.saison.omni:ehs-client:0.1.2'
 
 	//omni-common
-	implementation 'com.saison.omni:platform-commons:1.0.0'
+	implementation 'com.saison.omni:platform-commons:1.0.4-debug.1'
 	compileOnly 'com.saison.omni:platform-commons:1.0.0'
 }
 
