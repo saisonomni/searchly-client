@@ -4,6 +4,7 @@ import com.saisonomni.searchly_client.cdcConfigs.annotations.CDCEntity;
 import com.saisonomni.searchly_client.cdcConfigs.annotations.PublishEventOnDelete;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
 import org.springframework.data.mongodb.core.mapping.event.AfterDeleteEvent;
 import org.springframework.data.mongodb.core.mapping.event.AfterSaveEvent;
@@ -14,6 +15,7 @@ import java.lang.reflect.Field;
 
 
 @Component
+@ConditionalOnProperty(prefix = "hibernate.event.listener", name = "enabled", havingValue = "true")
 @Slf4j
 public class CustomMongoEventListener extends AbstractMongoEventListener<Object> {
 
@@ -39,6 +41,7 @@ public class CustomMongoEventListener extends AbstractMongoEventListener<Object>
         * */
         Boolean isSoftDeleted = null;
         try {
+            fieldToBeCheckedForDeletion.setAccessible(true);
             isSoftDeleted = fieldToBeCheckedForDeletion.get(entity).toString().compareToIgnoreCase(publishEventOnDelete.deletedValue())==0;
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
