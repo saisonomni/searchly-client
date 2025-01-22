@@ -43,7 +43,7 @@ public class GlobalEntityUpdateListener implements MergeEventListener {
             return;
         }
         Class<?> entityClass = entity.getClass();
-        log.info("Entering post delete listener");
+        log.info("Entering post update listener");
         JSONObject jsonObject;
         //check what field needs to be checked
         PublishEventOnDelete publishEventOnDelete = entityClass.getAnnotation(PublishEventOnDelete.class);

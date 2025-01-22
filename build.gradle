@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.saisonomni'
-version = '1.0.27'
+version = '1.0.28'
 sourceCompatibility = '11'
 
 repositories {
@@ -25,7 +25,7 @@ publishing {
 		mavenJava(MavenPublication) {
 			groupId = 'com.saisonomni'
 			artifactId = 'searchly-client'
-			version = '1.0.27'
+			version = '1.0.28'
 			from components.java
 		}
 	}
@@ -44,6 +44,7 @@ publishing {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 
 	implementation 'com.google.code.gson:gson:2.10.1'
 

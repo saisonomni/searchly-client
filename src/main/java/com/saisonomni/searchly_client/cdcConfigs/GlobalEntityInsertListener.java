@@ -13,6 +13,7 @@ public class GlobalEntityInsertListener implements PostInsertEventListener {
 
     @Override
     public void onPostInsert(PostInsertEvent event) {
+        log.info("Entering post insert listener");
         Object entity = event.getEntity();
         JSONObject jsonObject = HibernateOperationsUtility.upsertHelper(entity);
         new SendEventUtility().sendEventUtility(jsonObject);
