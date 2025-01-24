@@ -51,6 +51,7 @@ public class GlobalEntityUpdateListener implements MergeEventListener {
         /*
         Check if the entity is being soft deleted
         * */
+        fieldToBeCheckedForDeletion.setAccessible(true);
         Boolean isSoftDeleted = fieldToBeCheckedForDeletion.get(entity).toString().compareToIgnoreCase(publishEventOnDelete.deletedValue())==0;
         if(isSoftDeleted){
             // publish the payload with type DELETE
